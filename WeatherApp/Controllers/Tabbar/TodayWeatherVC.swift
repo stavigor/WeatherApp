@@ -28,13 +28,15 @@ class TodayWeatherVC: UIViewController {
         searchField.addTarget(self, action: #selector(enterPressed), for: .editingDidEndOnExit)
         weatherManager.delegate = self
         locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
         
-        locationManager.requestLocation()
-        
-        print(NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).last! as String)
-        
+                
     }
-    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        locationManager.requestLocation()
+    }
+
     
     @IBAction func getCurrentLocation(_ sender: Any) {
         DispatchQueue.global().async {
