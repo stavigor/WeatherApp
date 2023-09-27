@@ -91,7 +91,7 @@ struct WeatherManager {
     }
 
     func performForecastRequest(with urlString: String) {
-        SwiftLoader.show(title: "Fetching...", animated: true)
+        Loader.show(title: "Fetching...", animated: true)
         if let url = URL(string: urlString) {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { (data, response, error) in
@@ -114,7 +114,7 @@ struct WeatherManager {
                         print("forecastArray", forecastArray.count)
                         self.delegate?.didUpdateForecast(self, forecastArray: forecastArray)
                     }
-                    SwiftLoader.hide()
+                    Loader.hide()
                     return
                 }
                 if let safeData = data {
@@ -146,7 +146,7 @@ struct WeatherManager {
 //            dump(forecastArray[0])
             return forecastArray
         } catch {
-            SwiftLoader.hide()
+            Loader.hide()
             print("PARSE ERROR")
             print(error.localizedDescription)
             return nil

@@ -43,7 +43,7 @@ class ForecastWeatherVC: UIViewController {
                     }
                 case .authorizedAlways, .authorizedWhenInUse:
                     print("Access")
-                    SwiftLoader.show(title: "Fetching...", animated: true)
+                    Loader.show(title: "Fetching...", animated: true)
                     self.locationManager.requestLocation()
                 @unknown default:
                     break
@@ -103,7 +103,7 @@ extension ForecastWeatherVC: WeatherManagerDelegate {
                 return
             }
             self.cityLabel.text = sityName
-            SwiftLoader.hide()
+            Loader.hide()
             DatabaseManager.shared.addForecast(forecastArray)
         }
     }

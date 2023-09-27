@@ -63,6 +63,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E2B396B72AC41BBA0095467D /* Weather */ = {
+			isa = PBXGroup;
+			children = (
+				E2B55DB42AC33E3800A5AFD5 /* WeatherManager.swift */,
+				E2B55DCF2AC38F4F00A5AFD5 /* TodayWeather */,
+				E2B55DCE2AC38F1B00A5AFD5 /* Forecast */,
+			);
+			path = Weather;
+			sourceTree = "<group>";
+		};
 		E2B55D922AC321ED00A5AFD5 = {
 			isa = PBXGroup;
 			children = (
@@ -84,15 +94,14 @@
 			children = (
 				E2B55DBE2AC34FB700A5AFD5 /* Applocation */,
 				E2B55DC12AC3501600A5AFD5 /* Controllers */,
-				E2B55DBF2AC34FC800A5AFD5 /* Managers */,
-				E2B55DCF2AC38F4F00A5AFD5 /* TodayWeather */,
-				E2B55DCE2AC38F1B00A5AFD5 /* Forecast */,
+				E2B55DBF2AC34FC800A5AFD5 /* Loader */,
+				E2B55DDA2AC3ECFF00A5AFD5 /* DataBase */,
+				E2B396B72AC41BBA0095467D /* Weather */,
 				E2B55DCD2AC38F1000A5AFD5 /* Cell */,
 				E2B55DC02AC34FDE00A5AFD5 /* Extensions */,
 				E2B55DA72AC321F000A5AFD5 /* Assets.xcassets */,
 				E2B55DD02AC38F9C00A5AFD5 /* Screens */,
 				E2B55DAC2AC321F000A5AFD5 /* Info.plist */,
-				E2B55DDA2AC3ECFF00A5AFD5 /* DataBase */,
 			);
 			path = WeatherApp;
 			sourceTree = "<group>";
@@ -106,13 +115,12 @@
 			path = Applocation;
 			sourceTree = "<group>";
 		};
-		E2B55DBF2AC34FC800A5AFD5 /* Managers */ = {
+		E2B55DBF2AC34FC800A5AFD5 /* Loader */ = {
 			isa = PBXGroup;
 			children = (
-				E2B55DB42AC33E3800A5AFD5 /* WeatherManager.swift */,
 				E2B55DC92AC3843C00A5AFD5 /* Loader.swift */,
 			);
-			path = Managers;
+			path = Loader;
 			sourceTree = "<group>";
 		};
 		E2B55DC02AC34FDE00A5AFD5 /* Extensions */ = {

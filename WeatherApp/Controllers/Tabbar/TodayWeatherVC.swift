@@ -49,7 +49,7 @@ class TodayWeatherVC: UIViewController {
                     }
                 case .authorizedAlways, .authorizedWhenInUse:
                     print("Access")
-                    SwiftLoader.show(title: "Fetching...", animated: true)
+                    Loader.show(title: "Fetching...", animated: true)
                     self.locationManager.requestLocation()
                 @unknown default:
                     break
@@ -154,7 +154,7 @@ extension TodayWeatherVC: WeatherManagerDelegate {
             self.weatherIcon.image = UIImage(systemName: weather.conditionName.0)
             self.cityLabel.text = weather.city
             self.tipsLabel.text = weather.conditionName.1
-            SwiftLoader.hide()
+            Loader.hide()
             DatabaseManager.shared.addTodayWeather(weather)
         }
         

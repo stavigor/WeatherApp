@@ -10,7 +10,7 @@ import UIKit
 import QuartzCore
 import CoreGraphics
 
-public class SwiftLoader: UIView {
+public class Loader: UIView {
     
     struct Constants {
         static let loaderSpinnerMarginSide : CGFloat = 35.0
@@ -38,9 +38,9 @@ public class SwiftLoader: UIView {
         }
     }
     
-    class var shared: SwiftLoader {
+    class var shared: Loader {
         struct Singleton {
-            static let instance = SwiftLoader(frame: CGRect(origin: CGPoint(x: 0,y: 0),size: CGSize(width: Config().size,height: Config().size)))
+            static let instance = Loader(frame: CGRect(origin: CGPoint(x: 0,y: 0),size: CGSize(width: Config().size,height: Config().size)))
         }
         return Singleton.instance
     }
@@ -58,7 +58,7 @@ public class SwiftLoader: UIView {
         
         guard let currentWindow = currentWindow else { return }
         
-        let loader = SwiftLoader.shared
+        let loader = Loader.shared
         loader.canUpdated = true
         loader.animated = animated
         loader.title = title
@@ -85,12 +85,12 @@ public class SwiftLoader: UIView {
     }
     
     public class func hide() {
-        NotificationCenter.default.removeObserver(SwiftLoader.shared)
-        SwiftLoader.shared.stop()
+        NotificationCenter.default.removeObserver(Loader.shared)
+        Loader.shared.stop()
     }
     
     public class func setConfig(_ config: Config) {
-        let loader = SwiftLoader.shared
+        let loader = Loader.shared
         loader.config = config
         loader.frame = CGRect(origin: CGPoint(x: 0, y: 0),
                               size: CGSize(width: loader.config.size,
@@ -98,7 +98,7 @@ public class SwiftLoader: UIView {
     }
     
     @objc func rotated(notification: NSNotification) {
-        let loader = SwiftLoader.shared
+        let loader = Loader.shared
         
         let height: CGFloat = UIScreen.main.bounds.size.height
         let width: CGFloat = UIScreen.main.bounds.size.width
