@@ -2,18 +2,17 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="22G120" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="ForecastEntity" representedClassName="ForecastEntity" syncable="YES" codeGenerationType="class">
         <attribute name="cityName" optional="YES" attributeType="String"/>
-        <relationship name="list" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ListEntity" inverseName="relationship" inverseEntity="ListEntity"/>
+        <relationship name="list" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ListEntity" inverseName="forecast" inverseEntity="ListEntity"/>
     </entity>
     <entity name="ListEntity" representedClassName="ListEntity" syncable="YES" codeGenerationType="class">
-        <attribute name="temp" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="time" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="temp" optional="YES" attributeType="String"/>
+        <attribute name="time" optional="YES" attributeType="String"/>
         <attribute name="weatherID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="relationship" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ForecastEntity" inverseName="list" inverseEntity="ForecastEntity"/>
+        <relationship name="forecast" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ForecastEntity" inverseName="list" inverseEntity="ForecastEntity"/>
     </entity>
     <entity name="TodayEntity" representedClassName="TodayEntity" syncable="YES" codeGenerationType="class">
         <attribute name="cityName" optional="YES" attributeType="String"/>
         <attribute name="temp" optional="YES" attributeType="String"/>
         <attribute name="weatherID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
-    <entity name="WeatherEntity" representedClassName="WeatherEntity" syncable="YES" codeGenerationType="class"/>
 </model>

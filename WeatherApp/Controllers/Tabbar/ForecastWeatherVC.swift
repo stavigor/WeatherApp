@@ -33,11 +33,38 @@ class ForecastWeatherVC: UIViewController {
     }
     
     @IBAction func getCurrentLocation(_ sender: Any) {
-        SwiftLoader.show(title: "Fetching...", animated: true)
-        locationManager.requestLocation()
+        DispatchQueue.global().async {
+            if CLLocationManager.locationServicesEnabled() {
+                switch self.locationManager.authorizationStatus {
+                case .notDetermined, .restricted, .denied:
+                    print("No access")
+                    DispatchQueue.main.async {
+                        self.showAlert()
+                    }
+                case .authorizedAlways, .authorizedWhenInUse:
+                    print("Access")
+                    SwiftLoader.show(title: "Fetching...", animated: true)
+                    self.locationManager.requestLocation()
+                @unknown default:
+                    break
+                }
+            } else {
+                print("Location services are not enabled")
+            }
+        }
     }
     
-    
+    func showAlert() {
+        let message = "Go to app settings to allow locations access"
+        let alertController = UIAlertController(title: "Location service not permitted", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+            if let appSettings = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(appSettings, options: [:], completionHandler: nil)
+            }
+        }))
+        alertController.addAction(UIAlertAction(title: "No", style: .default, handler: { _ in}))
+        present(alertController, animated: true, completion: nil)
+    }
     
     @objc func enterPressed(){
         //do something with typed text if needed
@@ -77,6 +104,7 @@ extension ForecastWeatherVC: WeatherManagerDelegate {
             }
             self.cityLabel.text = sityName
             SwiftLoader.hide()
+            DatabaseManager.shared.addForecast(forecastArray)
         }
     }
     
@@ -87,7 +115,6 @@ extension ForecastWeatherVC: WeatherManagerDelegate {
 }
 
 //MARK: - TableViewDelegate
-
 extension ForecastWeatherVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return forecastAray.count
@@ -123,7 +150,25 @@ extension ForecastWeatherVC: UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let city = searchField.text {
-            weatherManager.fetchForecastWeather(cityName: city)
+            DispatchQueue.global().async {
+                if CLLocationManager.locationServicesEnabled() {
+                    switch self.locationManager.authorizationStatus {
+                    case .notDetermined, .restricted, .denied:
+                        print("No access")
+                        DispatchQueue.main.async {
+                            self.showAlert()
+                        }
+                    case .authorizedAlways, .authorizedWhenInUse:
+                        print("Access")
+                        self.weatherManager.fetchForecastWeather(cityName: city)
+                    @unknown default:
+                        break
+                    }
+                } else {
+                    print("Location services are not enabled")
+                }
+            }
+            
         }
         searchField.text = ""
     }

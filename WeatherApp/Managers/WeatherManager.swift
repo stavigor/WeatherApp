@@ -13,6 +13,8 @@ protocol WeatherManagerDelegate {
     func didUpdateForecast(_ weatherManager: WeatherManager, forecastArray: [ForecastrModel])
 }
 
+
+
 struct WeatherManager {
     private let currentWeatherURL = "https://api.openweathermap.org/data/2.5/weather?units=metric&appid=13efb6f71400508a0c4ecc39be12a187"
     private let forecastWeatherURL = "https://api.openweathermap.org/data/2.5/forecast?units=metric&appid=13efb6f71400508a0c4ecc39be12a187"
@@ -37,19 +39,19 @@ struct WeatherManager {
             let task = session.dataTask(with: url) { (data, response, error) in
                 if error != nil {
                     print(error!.localizedDescription)
-                    let weatherEntity = DatabaseManager.shared.fetchTodayWeather()
-                    let weather = TodayWeatherModel(id: Int(weatherEntity.weatherID),
-                                                    city: weatherEntity.cityName ?? "No data",
-                                                    temp: Double(weatherEntity.temp ?? "0.0") ?? 0.0,
-                                                    time: Int(Date().timeIntervalSince1970))
-                    print("\noffline:")
-                    dump(weather)
-                    self.delegate?.didUpdateWeather(self, weather: weather)
-                    
+                    if let weatherEntity = DatabaseManager.shared.fetchTodayWeather(){
+                        let weather = TodayWeatherModel(id: Int(weatherEntity.weatherID),
+                                                        city: weatherEntity.cityName ?? "No data",
+                                                        temp: Double(weatherEntity.temp ?? "0.0") ?? 0.0,
+                                                        time: Int(Date().timeIntervalSince1970))
+                        print("\nToday offline:")
+                        dump(weather)
+                        self.delegate?.didUpdateWeather(self, weather: weather)
+                    }
                     return
                 }
                 if let safeData = data {
-                    if let weather = self.parseCurrentJSON(safeData) {
+                    if let weather = self.parseTodayJSON(safeData) {
                         self.delegate?.didUpdateWeather(self, weather: weather)
                     }
                 }
@@ -58,7 +60,7 @@ struct WeatherManager {
         }
     }
     
-    func parseCurrentJSON(_ weatherData: Data) -> TodayWeatherModel? {
+    func parseTodayJSON(_ weatherData: Data) -> TodayWeatherModel? {
         do {
             let decodedData = try JSONDecoder().decode(TodayWeatherData.self, from: weatherData)
             let id = decodedData.weather[0].id
@@ -66,7 +68,7 @@ struct WeatherManager {
             let name = decodedData.name
             let time = decodedData.dt
             let weather = TodayWeatherModel(id: id, city: name, temp: temp, time: time)
-            print("\nonline:")
+            print("\nToday online:")
             dump(weather)
             return weather
             
@@ -95,7 +97,23 @@ struct WeatherManager {
             let task = session.dataTask(with: url) { (data, response, error) in
                 if error != nil {
                     print("TASK ERROR")
+                    
                     print(error!.localizedDescription)
+                    print("\nForecat offline:")
+                    if let forecastEntity = DatabaseManager.shared.fetchRForecast(){
+                        
+                        var forecastArray: [ForecastrModel] = []
+                        let listArray = forecastEntity.list?.allObjects as! [ListEntity]
+                        for list in listArray {
+                            let forecast = ForecastrModel(id: Int(list.weatherID),
+                                                          city: forecastEntity.cityName ?? "No data",
+                                                          temp: Double(list.temp ?? "0.0") ?? 0.0,
+                                                          time: Int(list.time ?? "0.0") ?? Int((Date().timeIntervalSince1970)))
+                            forecastArray.append(forecast)
+                        }
+                        print("forecastArray", forecastArray.count)
+                        self.delegate?.didUpdateForecast(self, forecastArray: forecastArray)
+                    }
                     SwiftLoader.hide()
                     return
                 }
@@ -123,9 +141,10 @@ struct WeatherManager {
                 let forecast = ForecastrModel(id: id, city: name, temp: temp, time: time)
                 forecastArray.append(forecast)
             }
-            dump(forecastArray[0])
+            print("\nForecat online:")
+            print("forecastArray", forecastArray.count)
+//            dump(forecastArray[0])
             return forecastArray
-            
         } catch {
             SwiftLoader.hide()
             print("PARSE ERROR")

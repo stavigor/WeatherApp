@@ -28,25 +28,15 @@ class TodayWeatherVC: UIViewController {
         searchField.addTarget(self, action: #selector(enterPressed), for: .editingDidEndOnExit)
         weatherManager.delegate = self
         locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
+        
         locationManager.requestLocation()
         
         print(NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true).last! as String)
         
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        checkPermition()
-    }
     
     @IBAction func getCurrentLocation(_ sender: Any) {
-        SwiftLoader.show(title: "Fetching...", animated: true)
-        locationManager.requestLocation()
-    }
-    
-    
-    func checkPermition(){
         DispatchQueue.global().async {
             if CLLocationManager.locationServicesEnabled() {
                 switch self.locationManager.authorizationStatus {
@@ -57,6 +47,8 @@ class TodayWeatherVC: UIViewController {
                     }
                 case .authorizedAlways, .authorizedWhenInUse:
                     print("Access")
+                    SwiftLoader.show(title: "Fetching...", animated: true)
+                    self.locationManager.requestLocation()
                 @unknown default:
                     break
                 }
@@ -64,6 +56,7 @@ class TodayWeatherVC: UIViewController {
                 print("Location services are not enabled")
             }
         }
+        
     }
     
     func showAlert() {
@@ -103,7 +96,25 @@ extension TodayWeatherVC: UITextFieldDelegate {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let city = searchField.text {
-            weatherManager.fetchCurrentWeather(cityName: city)
+            DispatchQueue.global().async {
+                if CLLocationManager.locationServicesEnabled() {
+                    switch self.locationManager.authorizationStatus {
+                    case .notDetermined, .restricted, .denied:
+                        print("No access")
+                        DispatchQueue.main.async {
+                            self.showAlert()
+                        }
+                    case .authorizedAlways, .authorizedWhenInUse:
+                        print("Access")
+                        self.weatherManager.fetchCurrentWeather(cityName: city)
+                    @unknown default:
+                        break
+                    }
+                } else {
+                    print("Location services are not enabled")
+                }
+            }
+            
         }
         
         searchField.text = ""
@@ -141,7 +152,7 @@ extension TodayWeatherVC: WeatherManagerDelegate {
             self.weatherIcon.image = UIImage(systemName: weather.conditionName.0)
             self.cityLabel.text = weather.city
             self.tipsLabel.text = weather.conditionName.1
-            
+            SwiftLoader.hide()
             DatabaseManager.shared.addTodayWeather(weather)
         }
         
